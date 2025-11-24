@@ -59,6 +59,45 @@ export async function searchBusinesses(query: string, location?: string, pageTok
         };
     } catch (error) {
         console.error('Error fetching places:', error);
-        throw error; // Re-throw to be handled by the caller
+        throw error;
+    }
+}
+
+const GOOGLE_PLACES_AUTOCOMPLETE_URL = 'https://places.googleapis.com/v1/places:autocomplete';
+
+export async function getPlacePredictions(input: string): Promise<{ description: string; placeId: string }[]> {
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    if (!apiKey) throw new Error('GOOGLE_MAPS_API_KEY is not set');
+
+    try {
+        const response = await fetch(GOOGLE_PLACES_AUTOCOMPLETE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Goog-Api-Key': apiKey,
+            },
+            body: JSON.stringify({
+                input,
+                includeQueryPredictions: false, // We only want places
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Google Places Autocomplete API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.suggestions) return [];
+
+        return data.suggestions
+            .filter((s: any) => s.placePrediction)
+            .map((s: any) => ({
+                description: s.placePrediction.text.text,
+                placeId: s.placePrediction.placeId,
+            }));
+    } catch (error) {
+        console.error('Error fetching predictions:', error);
+        return [];
     }
 }

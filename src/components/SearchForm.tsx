@@ -1,8 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import { Search, MapPin, Loader2 } from 'lucide-react';
 import { Combobox } from './Combobox';
+import { LocationCombobox } from './LocationCombobox';
 
 interface SearchFormProps {
     onSearch: (query: string, location: string) => Promise<void>;
@@ -35,19 +34,17 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
 
                 <div className="flex-1 flex items-center px-4 h-12 bg-gray-50 rounded-xl focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500 transition-all relative z-20">
                     <MapPin className="w-5 h-5 text-gray-400 mr-3 shrink-0" />
-                    <input
-                        type="text"
-                        placeholder="Location (e.g. New York, NY)"
-                        className="flex-1 bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-500"
+                    <LocationCombobox
                         value={location}
-                        onChange={(e) => setLocation(e.target.value)}
+                        onChange={setLocation}
+                        placeholder="Location (e.g. New York, NY)"
                     />
                 </div>
 
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors flex items-center justify-center min-w-[120px] relative z-10"
+                    className="h-12 px-8 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-xl transition-colors flex items-center justify-center min-w-[120px] relative z-10 cursor-pointer"
                 >
                     {isLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin" />

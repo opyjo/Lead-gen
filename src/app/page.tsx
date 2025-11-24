@@ -5,10 +5,11 @@ import { SearchForm } from '@/components/SearchForm';
 import { BusinessList } from '@/components/BusinessList';
 import { ExportButton } from '@/components/ExportButton';
 import { DashboardStats } from '@/components/DashboardStats';
-import { MapView } from '@/components/MapView';
+import { BusinessCardSkeleton } from '@/components/BusinessCardSkeleton';
+import { Toast } from '@/components/Toast';
 import { searchBusinessesAction } from './actions';
 import { Business } from '@/lib/types';
-import { Building2, TrendingUp, Users, BookmarkCheck, Map as MapIcon, List } from 'lucide-react';
+import { BookmarkCheck, Search as SearchIcon } from 'lucide-react';
 
 export default function Home() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -16,7 +17,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [activeTab, setActiveTab] = useState<'search' | 'saved'>('search');
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Stats state
   const [totalSearches, setTotalSearches] = useState(0);
@@ -103,8 +104,10 @@ export default function Home() {
     setSavedLeads(prev => {
       const isAlreadySaved = prev.some(lead => lead.id === business.id);
       if (isAlreadySaved) {
+        setToastMessage(`Removed ${business.name} from saved leads`);
         return prev.filter(lead => lead.id !== business.id);
       } else {
+        setToastMessage(`Saved ${business.name} to your leads`);
         return [...prev, business];
       }
     });
@@ -168,25 +171,6 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3">
-            {activeTab === 'search' && hasSearched && (
-              <div className="flex bg-gray-100 p-1 rounded-lg">
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                  title="List View"
-                >
-                  <List className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('map')}
-                  className={`p-2 rounded-md transition-all ${viewMode === 'map' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                  title="Map View"
-                >
-                  <MapIcon className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-
             {activeTab === 'saved' && savedLeads.length > 0 && (
               <ExportButton leads={savedLeads} />
             )}
@@ -196,35 +180,36 @@ export default function Home() {
         {activeTab === 'search' ? (
           hasSearched ? (
             <>
-              {viewMode === 'list' ? (
-                <>
-                  <BusinessList
-                    businesses={businesses}
-                    onSave={toggleSaveLead}
-                    savedLeads={savedLeads}
-                  />
-                  {nextPageToken && (
-                    <div className="mt-8 text-center">
-                      <button
-                        onClick={handleLoadMore}
-                        disabled={isLoading}
-                        className="px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-                      >
-                        {isLoading ? 'Loading...' : 'Load More Results'}
-                      </button>
-                    </div>
-                  )}
-                </>
+              {isLoading && businesses.length === 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(6)].map((_, i) => (
+                    <BusinessCardSkeleton key={i} />
+                  ))}
+                </div>
               ) : (
-                <MapView
+                <BusinessList
                   businesses={businesses}
-                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
+                  onSave={toggleSaveLead}
+                  savedLeads={savedLeads}
                 />
+              )}
+              {nextPageToken && (
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={isLoading}
+                    className="px-6 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    {isLoading ? 'Loading...' : 'Load More Results'}
+                  </button>
+                </div>
               )}
             </>
           ) : (
-            <div className="text-center py-20 opacity-50">
-              <p className="text-xl text-gray-400">Enter a search term and location to get started</p>
+            <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-200">
+              <SearchIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Start Your Search</h3>
+              <p className="text-gray-500">Enter a business type and location to find leads</p>
             </div>
           )
         ) : (
@@ -245,6 +230,13 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
     </main>
   );
 }

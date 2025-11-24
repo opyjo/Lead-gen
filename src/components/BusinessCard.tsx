@@ -9,7 +9,7 @@ interface BusinessCardProps {
 
 export function BusinessCard({ business, onSave, isSaved = false }: BusinessCardProps) {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200 relative group">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-all duration-200 relative group transform hover:scale-[1.02]">
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">{business.name}</h3>
@@ -19,31 +19,11 @@ export function BusinessCard({ business, onSave, isSaved = false }: BusinessCard
                         <span className="text-xs text-gray-500">({business.userRatingCount || 0})</span>
                     </div>
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                    {business.types && (
-                        <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full capitalize">
-                            {business.types[0].replace('_', ' ')}
-                        </span>
-                    )}
-                    {onSave && (
-                        <button
-                            onClick={() => onSave(business)}
-                            className={`text-xs px-4 py-2 rounded-lg transition-all font-medium shadow-sm flex items-center gap-1.5 ${isSaved
-                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md'
-                                }`}
-                        >
-                            {isSaved ? (
-                                <>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                    Saved
-                                </>
-                            ) : (
-                                'Save Lead'
-                            )}
-                        </button>
-                    )}
-                </div>
+                {business.types && (
+                    <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full capitalize">
+                        {business.types[0].replace('_', ' ')}
+                    </span>
+                )}
             </div>
 
             <div className="space-y-3 text-sm text-gray-600">
@@ -75,6 +55,27 @@ export function BusinessCard({ business, onSave, isSaved = false }: BusinessCard
                     </div>
                 )}
             </div>
+
+            {onSave && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                    <button
+                        onClick={() => onSave(business)}
+                        className={`text-xs px-4 py-2 rounded-lg transition-all font-medium shadow-sm flex items-center gap-1.5 cursor-pointer ${isSaved
+                            ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                            : 'bg-slate-600 text-white hover:bg-slate-700 hover:shadow-md'
+                            }`}
+                    >
+                        {isSaved ? (
+                            <>
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                Saved
+                            </>
+                        ) : (
+                            'Save Lead'
+                        )}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
