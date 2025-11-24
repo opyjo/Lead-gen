@@ -8,6 +8,10 @@ export interface Business {
   userRatingCount?: number;
   googleMapsUri?: string;
   types?: string[];
+  location?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 export interface SearchResponse {

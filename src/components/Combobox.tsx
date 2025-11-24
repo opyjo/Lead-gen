@@ -52,13 +52,16 @@ export function Combobox({ value, onChange, placeholder = "Select option...", re
             <div className="relative">
                 <input
                     type="text"
-                    className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-500 h-full"
+                    className="w-full bg-transparent border-none focus:outline-none text-gray-900 placeholder-gray-500 h-full pr-8"
                     placeholder={placeholder}
                     value={inputValue}
                     onChange={handleInputChange}
                     onFocus={() => setOpen(true)}
                     required={required}
                 />
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <ChevronsUpDown className="w-4 h-4 text-gray-400" />
+                </div>
             </div>
 
             {open && filteredOptions.length > 0 && (

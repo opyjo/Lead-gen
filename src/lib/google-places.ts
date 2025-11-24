@@ -17,7 +17,7 @@ export async function searchBusinesses(query: string, location?: string, pageTok
             headers: {
                 'Content-Type': 'application/json',
                 'X-Goog-Api-Key': apiKey,
-                'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.googleMapsUri,places.types,nextPageToken',
+                'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.rating,places.userRatingCount,places.googleMapsUri,places.types,places.location,nextPageToken',
             },
             body: JSON.stringify({
                 textQuery,
@@ -47,6 +47,10 @@ export async function searchBusinesses(query: string, location?: string, pageTok
             userRatingCount: place.userRatingCount,
             googleMapsUri: place.googleMapsUri,
             types: place.types,
+            location: place.location ? {
+                lat: place.location.latitude,
+                lng: place.location.longitude
+            } : undefined,
         }));
 
         return {

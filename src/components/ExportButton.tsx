@@ -1,6 +1,6 @@
 'use client';
 
-import { Download } from 'lucide-react';
+import { Download, ChevronDown } from 'lucide-react';
 import { Business } from '@/lib/types';
 
 interface ExportButtonProps {
@@ -48,6 +48,7 @@ export function ExportButton({ leads, filename = 'leads.csv' }: ExportButtonProp
         >
             <Download className="w-4 h-4" />
             Export CSV
+            <ChevronDown className="w-4 h-4 ml-1 opacity-80" />
         </button>
     );
 }

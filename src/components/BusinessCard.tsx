@@ -28,12 +28,19 @@ export function BusinessCard({ business, onSave, isSaved = false }: BusinessCard
                     {onSave && (
                         <button
                             onClick={() => onSave(business)}
-                            className={`text-xs px-3 py-1.5 rounded-full transition-colors ${isSaved
-                                    ? 'bg-green-100 text-green-700 font-medium'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            className={`text-xs px-4 py-2 rounded-lg transition-all font-medium shadow-sm flex items-center gap-1.5 ${isSaved
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md'
                                 }`}
                         >
-                            {isSaved ? 'Saved' : 'Save Lead'}
+                            {isSaved ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                    Saved
+                                </>
+                            ) : (
+                                'Save Lead'
+                            )}
                         </button>
                     )}
                 </div>
